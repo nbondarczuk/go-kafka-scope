@@ -4,7 +4,6 @@ import (
 	"log/slog"
 
 	"github.com/gin-gonic/gin"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"go-kafka-scope-api/internal/config"
 	"go-kafka-scope-api/internal/handler/system"
@@ -32,7 +31,8 @@ func New(version string) (*Server, error) {
 	s.router.Use(middleware.RequestLogger())
 
 	// Register defined handlers.
-	s.RegisterHandlers()
+	s.RegisterSystemHandlers()
+	s.RegisterKafkaAdminHandlers()
 
 	return s, nil
 }
@@ -42,12 +42,4 @@ func (s *Server) Run() error {
 	port := config.ServerHTTPPort()
 	logging.Logger.Info("Starting HTTP server", slog.String("port", port))
 	return s.router.Run(":" + port)
-}
-
-// RegisterHandlers links handlers to API points.
-func (s *Server) RegisterHandlers() {
-	// System operations
-	s.router.GET("/system/health", system.HealthHandler)
-	s.router.GET("/system/version", system.VersionHandler)
-	s.router.GET("/system/metrics", gin.WrapH(promhttp.Handler()))
 }
