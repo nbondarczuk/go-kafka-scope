@@ -1,3 +1,3 @@
 # Purpose
 
-Kafka info API 
+The service API provides information about Kafka cluster.
